@@ -1,30 +1,90 @@
+<?php
+require_once '../config/database.php';
+session_start();
+
+
+$errors = [];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    if (empty($_POST["nom"])) {
+        $errors[]  = "nom is required";
+    } else {
+        $nom = trim($_POST["nom"]);
+    }
+    if (empty($_POST["prenom"])) {
+        $errors[]   = "prenom is require";
+    } else {
+        $prenom =  trim(($_POST["prenom"]));
+    }
+    if (empty($_POST["email"])) {
+        $errors[] = "email is require";
+    } else {
+        $email = trim($_POST["email"]);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $emailErr = "Invalid email format";
+        }
+    }
+    // if (empty($_POST["telephone"])) {
+    //     $errors[] = "telephone is require";
+    // } else {
+    //     $telephone =  trim(($_POST["telephone"]));
+    // }
+    if (empty($_POST["classe"])) {
+        $errors[] = "class is require";
+    } else {
+        $classe =  trim(($_POST["classe"]));
+    }
+    if (empty($_POST["date_naissance"])) {
+        $errors[] = "date_naissance is require";
+    } else {
+        $date_naissance =  trim(($_POST["date_naissance"]));
+    }
+    if (empty($errors)) {
+        $stmt = getConnection()->prepare("INSERT INTO  etudiants (nom, prenom, email, classe, date_naissance) values (?,?,?,?,?)");
+        $stmt->execute([$nom, $prenom, $email, $classe, $date_naissance]);
+    } else {
+        $errors;
+    }
+}
+
+
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>TP 1.5 — TODO: Ajouter un étudiant</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>TP 1.5 — TODO: Ajouter un étudiant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
-  <div class="container mt-5">
-    <a href="../index.php" class="btn btn-secondary mb-3">← Retour</a>
-    <h1>TP 1.5 — TODO: Ajouter un étudiant</h1>
-    <p class="text-muted">Consigne courte : écrivez le code PHP pour valider et insérer un étudiant en 1h30.</p>
+    <div class="container mt-5">
+        <a href="../index.php" class="btn btn-secondary mb-3">← Retour</a>
+        <h1>TP 1.5 — TODO: Ajouter un étudiant</h1>
+        <p class="text-muted">Consigne courte : écrivez le code PHP pour valider et insérer un étudiant en 1h30.</p>
 
-    <ul>
-      <li>TODO: Validez les champs (nom, prénom, email, classe, date_naissance).</li>
-      <li>TODO: Affichez les erreurs au-dessus du formulaire.</li>
-      <li>TODO: Redirigez vers <code>index.php?success=add</code> après insertion.</li>
-    </ul>
+        <ul>
+            <li>TODO: Validez les champs (nom, prénom, email, classe, date_naissance).</li>
+            <li>TODO: Affichez les erreurs au-dessus du formulaire.</li>
+            <li>TODO: Redirigez vers <code>index.php?success=add</code> après insertion.</li>
+        </ul>
 
-    <p class="text-muted small">Remarque : ce fichier est intentionnellement simple — remplacez-le par votre implémentation PHP.</p>
-  </div>
+        <p class="text-muted small">Remarque : ce fichier est intentionnellement simple — remplacez-le par votre implémentation PHP.</p>
+    </div>
 </body>
+
 </html>
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,11 +92,21 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        body { background-color: #f8f9fa; padding-top: 20px; }
-        .container { max-width: 800px; }
-        .card { box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+        }
+
+        .card {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- En-tête -->
@@ -69,23 +139,21 @@
                         <!-- Nom -->
                         <div class="col-md-6 mb-3">
                             <label for="nom" class="form-label">Nom *</label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="nom" 
-                                   name="nom" 
-                                   value="<?php echo isset($_POST['nom']) ? htmlspecialchars($_POST['nom']) : ''; ?>"
-                                   required>
+                            <input type="text"
+                                class="form-control"
+                                id="nom"
+                                name="nom"
+                                value="<?php echo isset($_POST['nom']) ? htmlspecialchars($_POST['nom']) : ''; ?>">
                         </div>
 
                         <!-- Prénom -->
                         <div class="col-md-6 mb-3">
                             <label for="prenom" class="form-label">Prénom *</label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="prenom" 
-                                   name="prenom" 
-                                   value="<?php echo isset($_POST['prenom']) ? htmlspecialchars($_POST['prenom']) : ''; ?>"
-                                   required>
+                            <input type="text"
+                                class="form-control"
+                                id="prenom"
+                                name="prenom"
+                                value="<?php echo isset($_POST['prenom']) ? htmlspecialchars($_POST['prenom']) : ''; ?>">
                         </div>
                     </div>
 
@@ -93,23 +161,22 @@
                         <!-- Email -->
                         <div class="col-md-6 mb-3">
                             <label for="email" class="form-label">Email *</label>
-                            <input type="email" 
-                                   class="form-control" 
-                                   id="email" 
-                                   name="email" 
-                                   value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
-                                   required>
+                            <input type="email"
+                                class="form-control"
+                                id="email"
+                                name="email"
+                                value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                         </div>
 
                         <!-- Téléphone -->
                         <div class="col-md-6 mb-3">
                             <label for="telephone" class="form-label">Téléphone</label>
-                            <input type="tel" 
-                                   class="form-control" 
-                                   id="telephone" 
-                                   name="telephone" 
-                                   value="<?php echo isset($_POST['telephone']) ? htmlspecialchars($_POST['telephone']) : ''; ?>"
-                                   placeholder="06xxxxxxxx">
+                            <input type="tel"
+                                class="form-control"
+                                id="telephone"
+                                name="telephone"
+                                value="<?php echo isset($_POST['telephone']) ? htmlspecialchars($_POST['telephone']) : ''; ?>"
+                                placeholder="06xxxxxxxx">
                         </div>
                     </div>
 
@@ -117,7 +184,7 @@
                         <!-- Classe -->
                         <div class="col-md-6 mb-3">
                             <label for="classe" class="form-label">Classe *</label>
-                            <select class="form-select" id="classe" name="classe" required>
+                            <select class="form-select" id="classe" name="classe">
                                 <option value="">-- Sélectionner une classe --</option>
                                 <option value="Sixième" <?php echo (isset($_POST['classe']) && $_POST['classe'] == 'Sixième') ? 'selected' : ''; ?>>Sixième</option>
                                 <option value="Cinquième" <?php echo (isset($_POST['classe']) && $_POST['classe'] == 'Cinquième') ? 'selected' : ''; ?>>Cinquième</option>
@@ -136,12 +203,11 @@
                         <!-- Date de naissance -->
                         <div class="col-md-6 mb-3">
                             <label for="date_naissance" class="form-label">Date de Naissance *</label>
-                            <input type="date" 
-                                   class="form-control" 
-                                   id="date_naissance" 
-                                   name="date_naissance" 
-                                   value="<?php echo isset($_POST['date_naissance']) ? htmlspecialchars($_POST['date_naissance']) : ''; ?>"
-                                   required>
+                            <input type="date"
+                                class="form-control"
+                                id="date_naissance"
+                                name="date_naissance"
+                                value="<?php echo isset($_POST['date_naissance']) ? htmlspecialchars($_POST['date_naissance']) : ''; ?>">
                         </div>
                     </div>
 
@@ -161,4 +227,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
